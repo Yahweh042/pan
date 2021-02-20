@@ -21,8 +21,14 @@ class Aria2Service : Service() {
 
     private val mBinder = Aria2Binder()
 
-    private lateinit var aria2c: File
-    private lateinit var conf: File
+    class Aria2Binder : Binder() {
+
+//        fun getService(): Aria2Service = this@Aria2Service
+
+    }
+
+    private lateinit var fileAria2c: File
+    private lateinit var fileConf: File
     lateinit var thread: Aria2Thread
 
     override fun onBind(intent: Intent): IBinder = mBinder
@@ -31,45 +37,44 @@ class Aria2Service : Service() {
         super.onCreate()
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel("com.example.pan", "下载服务常驻通知", NotificationManager.IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel(
+                "com.example.pan",
+                "下载服务常驻通知",
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             manager.createNotificationChannel(channel)
         }
         val intent = Intent(this, MainActivity::class.java)
         val pi = PendingIntent.getActivity(this, 0, intent, 0)
         val notification = NotificationCompat.Builder(this, "com.example.pan")
-            .setContentTitle("pan")
-            .setContentText("下载服务正在运行")
+            .setContentTitle("Aria2c")
+            .setContentText("Aria2c服务正在运行中")
             .setContentIntent(pi)
-            .setSmallIcon(R.drawable.ic_notifications_black_24dp)
+            .setSmallIcon(R.drawable.baseline_cloud_download_black_24dp)
             .build()
         startForeground(1, notification)
 
-        aria2c = File(filesDir, "aria2c")
-        conf = File(filesDir, "aria2.conf")
-        if (!aria2c.exists() || !conf.exists()) {
+        fileAria2c = File(filesDir, "aria2c")
+        fileConf = File(filesDir, "aria2.conf")
+        if (!fileAria2c.exists() || !fileConf.exists()) {
             try {
-                aria2c.delete()
+                fileAria2c.delete()
                 val aria2cFile = assets.open("aria2c")
-                aria2c.writeBytes(aria2cFile.readBytes())
-                Runtime.getRuntime().exec("chmod 777 " + aria2c.absolutePath)
-                conf.delete()
+                fileAria2c.writeBytes(aria2cFile.readBytes())
+                Runtime.getRuntime().exec("chmod 777 " + fileAria2c.absoluteFile)
+                fileConf.delete()
                 val confFile = assets.open("aria2.conf")
-                conf.writeBytes(confFile.readBytes())
-                Runtime.getRuntime().exec("chmod 777 " + conf.absolutePath)
+                fileConf.writeBytes(confFile.readBytes())
+                Runtime.getRuntime().exec("chmod 777 " + fileConf.absoluteFile)
             } catch (e: Exception) {
                 Log.e(TAG, "初始化aria2c文件失败:", e)
             }
         }
-        thread = Aria2Thread(aria2c.absolutePath, "--conf-path=${conf.absolutePath}")
-        Thread(thread).start()
+
+        Runtime.getRuntime().exec(fileAria2c.absolutePath + " --conf-path=${fileConf.absoluteFile}")
+//        thread = Aria2Thread(fileAria2c.absolutePath, "--conf-path=${fileConf.absoluteFile}")
+//        Thread(thread).start()
     }
 
-    class Aria2Binder : Binder() {
-        fun startAria2() {
-        }
 
-        fun stopAria2() {
-
-        }
-    }
 }
