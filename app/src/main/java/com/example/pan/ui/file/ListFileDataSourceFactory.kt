@@ -1,4 +1,4 @@
-package com.example.pan.ui.dashboard
+package com.example.pan.ui.file
 
 import androidx.paging.DataSource
 import com.example.pan.http.IPanService

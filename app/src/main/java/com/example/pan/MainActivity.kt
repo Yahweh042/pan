@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
-import com.example.pan.ui.dashboard.DashboardFragment
+import com.example.pan.ui.file.ListFileFragment
 import com.example.pan.ui.home.HomeFragment
 import com.example.pan.ui.notifications.NotificationsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
             override fun getItem(position: Int): Fragment {
                 return when (position) {
                     0 -> HomeFragment()
-                    1 -> DashboardFragment()
+                    1 -> ListFileFragment()
                     else -> NotificationsFragment()
                 }
             }

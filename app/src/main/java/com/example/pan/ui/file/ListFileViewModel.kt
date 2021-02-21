@@ -1,4 +1,4 @@
-package com.example.pan.ui.dashboard
+package com.example.pan.ui.file
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
@@ -10,7 +10,7 @@ import androidx.paging.PagedList
 import com.example.pan.http.IPanService
 import com.example.pan.model.FileInfo
 
-class DashboardViewModel @ViewModelInject constructor(
+class ListFileViewModel @ViewModelInject constructor(
     private val panService: IPanService
 ) : ViewModel() {
 

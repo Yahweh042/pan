@@ -1,4 +1,4 @@
-package com.example.pan.ui.dashboard
+package com.example.pan.ui.file
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

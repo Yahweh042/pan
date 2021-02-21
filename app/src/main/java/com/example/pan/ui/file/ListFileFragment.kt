@@ -1,4 +1,4 @@
-package com.example.pan.ui.dashboard
+package com.example.pan.ui.file
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,9 +13,9 @@ import com.example.pan.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class DashboardFragment : Fragment() {
+class ListFileFragment : Fragment() {
 
-    private val mViewModel: DashboardViewModel by viewModels()
+    private val mViewModel: ListFileViewModel by viewModels()
     private val adapter = ListFileInfoAdapter()
 
     override fun onCreateView(
