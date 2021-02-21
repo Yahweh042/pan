@@ -17,7 +17,9 @@ import com.example.pan.ui.home.HomeFragment
 import com.example.pan.ui.notifications.NotificationsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.tbruyelle.rxpermissions3.RxPermissions
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mBinder: Aria2Service.Aria2Binder

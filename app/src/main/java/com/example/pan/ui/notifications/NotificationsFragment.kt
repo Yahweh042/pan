@@ -30,7 +30,7 @@ class NotificationsFragment : Fragment() {
         })
 
         thread {
-            notificationsViewModel.getGlobalStat()
+//            notificationsViewModel.getGlobalStat()
 
         }
 
