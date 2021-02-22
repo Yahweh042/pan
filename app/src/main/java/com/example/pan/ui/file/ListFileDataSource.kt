@@ -11,10 +11,17 @@ class ListFileDataSource(
     private val dir: String
 ) : PageKeyedDataSource<Int, FileInfo>() {
 
-    override fun loadInitial(params: LoadInitialParams<Int>, callback: LoadInitialCallback<Int, FileInfo>) {
+    override fun loadInitial(
+        params: LoadInitialParams<Int>,
+        callback: LoadInitialCallback<Int, FileInfo>
+    ) {
         GlobalScope.launch {
             val response = panService.list("time", "0", "0", 1, params.requestedLoadSize, dir)
-            callback.onResult(response.list, null, 1)
+            if (response.errno == 0) {
+                callback.onResult(response.list, null, 1)
+            } else {
+                callback.onResult(arrayListOf(), null, 1)
+            }
         }
     }
 
@@ -26,7 +33,11 @@ class ListFileDataSource(
         GlobalScope.launch {
             val response =
                 panService.list("time", "0", "0", params.key, params.requestedLoadSize, dir)
-            callback.onResult(response.list, params.key + 1)
+            if (response.errno == 0) {
+                callback.onResult(response.list, params.key + 1)
+            } else {
+                callback.onResult(arrayListOf(), params.key + 1)
+            }
         }
     }
 }

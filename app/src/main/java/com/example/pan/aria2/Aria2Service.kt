@@ -10,9 +10,11 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.example.pan.MainActivity
 import com.example.pan.R
+import com.example.pan.ui.Utils
 import java.io.File
 
 class Aria2Service : Service() {
@@ -61,7 +63,8 @@ class Aria2Service : Service() {
         if (!fileAria2c.exists() || !fileConf.exists()) {
             try {
                 fileAria2c.delete()
-                val aria2cFile = assets.open("aria2c")
+                val aria2cFile =
+                    if (Utils.is64bit()) assets.open("aria2c") else assets.open("aria2c_32")
                 fileAria2c.writeBytes(aria2cFile.readBytes())
                 Runtime.getRuntime().exec("chmod 777 " + fileAria2c.absoluteFile)
                 fileConf.delete()
@@ -72,7 +75,11 @@ class Aria2Service : Service() {
                 Log.e(TAG, "初始化aria2c文件失败:", e)
             }
         }
-        Runtime.getRuntime().exec(fileAria2c.absolutePath + " --conf-path=${fileConf.absoluteFile}")
+        try {
+            Runtime.getRuntime().exec(fileAria2c.absolutePath + " --conf-path=${fileConf.absoluteFile}")
+        } catch (e: Exception) {
+            Toast.makeText(applicationContext, "初始化aria2c服务失败:${e.message}", Toast.LENGTH_SHORT).show()
+        }
 //        thread = Aria2Thread(fileAria2c.absolutePath, "--conf-path=${fileConf.absoluteFile}")
 //        Thread(thread).start()
     }
