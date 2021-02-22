@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.example.pan.aria2.Aria2Service
 import com.example.pan.ui.file.ListFileFragment
 import com.example.pan.ui.home.HomeFragment
 import com.example.pan.ui.notifications.NotificationsFragment
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            TODO("Not yet implemented")
+
         }
 
     }
@@ -43,10 +44,7 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
         viewPager.requestDisallowInterceptTouchEvent(true)
         viewPager.offscreenPageLimit = 3
-        viewPager.adapter = object : FragmentStatePagerAdapter(
-            supportFragmentManager,
-            BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
-        ) {
+        viewPager.adapter = object : FragmentStatePagerAdapter(supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
             override fun getCount(): Int = 3
 
             override fun getItem(position: Int): Fragment {
@@ -58,19 +56,10 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-            }
+        viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
 
             override fun onPageSelected(position: Int) {
                 bottomNavigationView.menu.getItem(position).isChecked = true
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {
             }
 
         })

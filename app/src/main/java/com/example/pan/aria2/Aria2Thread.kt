@@ -1,4 +1,4 @@
-package com.example.pan
+package com.example.pan.aria2
 
 import android.util.Log
 

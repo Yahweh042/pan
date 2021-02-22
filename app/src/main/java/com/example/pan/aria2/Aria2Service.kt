@@ -1,4 +1,4 @@
-package com.example.pan
+package com.example.pan.aria2
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -11,6 +11,8 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.example.pan.MainActivity
+import com.example.pan.R
 import java.io.File
 
 class Aria2Service : Service() {
@@ -21,9 +23,9 @@ class Aria2Service : Service() {
 
     private val mBinder = Aria2Binder()
 
-    class Aria2Binder : Binder() {
+    inner class Aria2Binder : Binder() {
 
-//        fun getService(): Aria2Service = this@Aria2Service
+        fun getService(): Aria2Service = this@Aria2Service
 
     }
 
@@ -70,7 +72,6 @@ class Aria2Service : Service() {
                 Log.e(TAG, "初始化aria2c文件失败:", e)
             }
         }
-
         Runtime.getRuntime().exec(fileAria2c.absolutePath + " --conf-path=${fileConf.absoluteFile}")
 //        thread = Aria2Thread(fileAria2c.absolutePath, "--conf-path=${fileConf.absoluteFile}")
 //        Thread(thread).start()
