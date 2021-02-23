@@ -16,7 +16,7 @@ class ListFileViewModel @ViewModelInject constructor(
 
     val dirLiveData = MutableLiveData<String>()
     val fileInfoList: LiveData<PagedList<FileInfo>> = Transformations.switchMap(dirLiveData) {
-        LivePagedListBuilder(ListFileDataSourceFactory(panService, it), 20).build()
+        LivePagedListBuilder(ListFileDataSourceFactory(panService, it), 100).build()
     }
 
     fun changeDir(dir: String) {

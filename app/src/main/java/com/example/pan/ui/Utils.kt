@@ -16,7 +16,7 @@ object Utils {
     }
 
     fun formatDate(time: Long): String {
-        val simpleDateFormat = SimpleDateFormat.getDateTimeInstance()
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINESE)
         return simpleDateFormat.format(Date(time * 1000))
     }
 

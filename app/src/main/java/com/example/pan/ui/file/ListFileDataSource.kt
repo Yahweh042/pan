@@ -18,9 +18,9 @@ class ListFileDataSource(
         GlobalScope.launch {
             val response = panService.list("time", "0", "0", 1, params.requestedLoadSize, dir)
             if (response.errno == 0) {
-                callback.onResult(response.list, null, 1)
+                callback.onResult(response.list, null, 2)
             } else {
-                callback.onResult(arrayListOf(), null, 1)
+                callback.onResult(arrayListOf(), null, 2)
             }
         }
     }

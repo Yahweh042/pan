@@ -14,6 +14,8 @@ import com.example.pan.ui.base.BaseViewHolder
 class ListFileInfoAdapter :
     PagedListAdapter<FileInfo, BaseViewHolder<ItemFileInfoBinding>>(Callback()) {
 
+        private var itemClickListener: OnItemClickListener? = null
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -35,9 +37,19 @@ class ListFileInfoAdapter :
                 holder.binding.icon.setImageResource(R.drawable.baseline_file_black_24dp)
                 simpleInfo += " ${Utils.formatBit(it.size)}"
             }
-            holder.binding.simpleInfo.textSize = 12F
             holder.binding.simpleInfo.text = simpleInfo
+            holder.itemView.setOnClickListener {
+                itemClickListener?.onItemClick(item)
+            }
         }
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(item: FileInfo)
+    }
+
+    fun setOnItemClickListener(listener:OnItemClickListener) {
+        this.itemClickListener = listener
     }
 
     internal class Callback : DiffUtil.ItemCallback<FileInfo>() {
