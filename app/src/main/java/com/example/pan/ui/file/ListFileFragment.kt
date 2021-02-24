@@ -10,8 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.pan.R
+import com.example.pan.databinding.FragmentDashboardBinding
 import com.example.pan.model.FileInfo
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,21 +22,32 @@ class ListFileFragment : Fragment() {
 
     private val mViewModel: ListFileViewModel by viewModels()
     private val adapter = ListFileInfoAdapter()
+    private lateinit var binding: FragmentDashboardBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         mViewModel.fileInfoList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
+            binding.refreshLayout.isRefreshing = false
         }
-        return inflater.inflate(R.layout.fragment_dashboard, container, false)
+        mViewModel.dirLiveData.observe(viewLifecycleOwner) {
+            binding.toolbar.title = it
+            if ("/" != it) {
+                binding.toolbar.setNavigationIcon(R.drawable.baseline_download_black_24dp)
+            } else {
+                binding.toolbar.navigationIcon = null
+            }
+        }
+        binding = FragmentDashboardBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
+        val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
         recyclerView.itemAnimator = DefaultItemAnimator()
@@ -51,11 +62,15 @@ class ListFileFragment : Fragment() {
                 if (item.isdir == 1) {
                     mViewModel.changeDir(item.path)
                 } else {
-                    AlertDialog.Builder(this@ListFileFragment.requireContext()).setMessage(Gson().toJson(item)).create().show()
+                    AlertDialog.Builder(this@ListFileFragment.requireContext())
+                        .setMessage(Gson().toJson(item)).create().show()
                 }
             }
 
         })
         mViewModel.changeDir("/")
+        binding.refreshLayout.setOnRefreshListener {
+            mViewModel.changeDir("/")
+        }
     }
 }

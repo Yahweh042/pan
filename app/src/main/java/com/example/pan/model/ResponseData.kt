@@ -2,7 +2,7 @@ package com.example.pan.model
 
 import com.google.gson.annotations.SerializedName
 
-data class BaseResponse<T>(
+data class ResponseData<T>(
     @SerializedName("errno") val errno: Int,
     @SerializedName("guid_info") val guid_info: String,
     @SerializedName("list") val list: List<T>,
