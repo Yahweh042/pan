@@ -37,6 +37,9 @@ class ListFileFragment : Fragment() {
             binding.toolbar.title = it
             if ("/" != it) {
                 binding.toolbar.setNavigationIcon(R.drawable.baseline_download_black_24dp)
+                binding.toolbar.setNavigationOnClickListener {
+                    mViewModel.onBackDir()
+                }
             } else {
                 binding.toolbar.navigationIcon = null
             }
@@ -68,9 +71,9 @@ class ListFileFragment : Fragment() {
             }
 
         })
-        mViewModel.changeDir("/")
+        mViewModel.initData()
         binding.refreshLayout.setOnRefreshListener {
-            mViewModel.changeDir("/")
+            mViewModel.refresh()
         }
     }
 }

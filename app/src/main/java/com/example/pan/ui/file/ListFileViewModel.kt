@@ -23,4 +23,16 @@ class ListFileViewModel @ViewModelInject constructor(
         dirLiveData.postValue(dir)
     }
 
+    fun onBackDir() {
+        val value = dirLiveData.value
+        dirLiveData.postValue(value?.substring(value.lastIndexOf("/")))
+    }
+
+    fun initData() {
+        dirLiveData.postValue("/")
+    }
+
+    fun refresh() {
+        fileInfoList.value?.dataSource?.invalidate()
+    }
 }
