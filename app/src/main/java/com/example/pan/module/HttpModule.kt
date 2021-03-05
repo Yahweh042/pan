@@ -2,6 +2,7 @@ package com.example.pan.module
 
 import android.content.Context
 import com.example.pan.http.IPanService
+import com.example.pan.http.PanRepository
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
@@ -64,4 +65,9 @@ class HttpModule {
         return retrofit.create(IPanService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun providePanRepository(service: IPanService): PanRepository {
+        return PanRepository(service)
+    }
 }

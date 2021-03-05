@@ -1,6 +1,7 @@
 package com.example.pan.ui.file
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,18 +32,21 @@ class ListFileFragment : Fragment() {
     ): View {
         mViewModel.fileInfoList.observe(viewLifecycleOwner) {
             adapter.submitList(it)
-            binding.refreshLayout.isRefreshing = false
+            mViewModel.stopRefresh()
         }
         mViewModel.dirLiveData.observe(viewLifecycleOwner) {
             binding.toolbar.title = it
-            if ("/" != it) {
-                binding.toolbar.setNavigationIcon(R.drawable.baseline_download_black_24dp)
-                binding.toolbar.setNavigationOnClickListener {
-                    mViewModel.onBackDir()
-                }
-            } else {
-                binding.toolbar.navigationIcon = null
-            }
+//            if ("/" != it) {
+//                binding.toolbar.setNavigationIcon(R.drawable.ic_home_black_24dp)
+//                binding.toolbar.setNavigationOnClickListener {
+//                    mViewModel.onBackDir()
+//                }
+//            } else {
+//                binding.toolbar.navigationIcon = null
+//            }
+        }
+        mViewModel.refreshStatus.observe(viewLifecycleOwner) {
+            binding.refreshLayout.isRefreshing = it
         }
         binding = FragmentDashboardBinding.inflate(layoutInflater, container, false)
         return binding.root
@@ -60,6 +64,15 @@ class ListFileFragment : Fragment() {
                 DividerItemDecoration.VERTICAL
             )
         )
+        view.isFocusableInTouchMode = true
+        view.requestFocus()
+        view.setOnKeyListener { _, keyCode, event ->
+            if (event.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                mViewModel.onBackDir()
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
+        }
         adapter.setOnItemClickListener(object : ListFileInfoAdapter.OnItemClickListener {
             override fun onItemClick(item: FileInfo) {
                 if (item.isdir == 1) {

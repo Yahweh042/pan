@@ -59,12 +59,14 @@ class Aria2Service : Service() {
         startForeground(1, notification)
 
         fileAria2c = File(filesDir, "aria2c")
+        fileAria2c.delete()
         fileConf = File(filesDir, "aria2.conf")
+        fileConf.delete()
         if (!fileAria2c.exists() || !fileConf.exists()) {
             try {
                 fileAria2c.delete()
                 val aria2cFile =
-                    if (Utils.is64bit()) assets.open("aria2c") else assets.open("aria2c_32")
+                    if (!Utils.is64bit()) assets.open("aria2c") else assets.open("aria2c_32")
                 fileAria2c.writeBytes(aria2cFile.readBytes())
                 Runtime.getRuntime().exec("chmod 777 " + fileAria2c.absoluteFile)
                 fileConf.delete()
