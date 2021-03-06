@@ -35,7 +35,7 @@ class PanRepository @Inject constructor(
 
     fun download() = flow {
         val templateVariable = service.getTemplateVariable(arrayListOf("sign1", "sign2", "sign3", "timestamp"))
-
+        emit(templateVariable)
     }.catch {
     }.flowOn(Dispatchers.IO)
 }

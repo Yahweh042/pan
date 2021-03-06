@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -56,20 +57,11 @@ class Aria2Service : Service() {
             .setContentIntent(pi)
             .setSmallIcon(R.drawable.baseline_cloud_download_black_24dp)
             .build()
-        startForeground(1, notification)
 
-        fileAria2c = File(filesDir, "aria2c")
-        fileAria2c.delete()
+        fileAria2c = File(applicationInfo.nativeLibraryDir, "libaria2c.so")
         fileConf = File(filesDir, "aria2.conf")
-        fileConf.delete()
-        if (!fileAria2c.exists() || !fileConf.exists()) {
+        if (!fileConf.exists()) {
             try {
-                fileAria2c.delete()
-                val aria2cFile =
-                    if (!Utils.is64bit()) assets.open("aria2c") else assets.open("aria2c_32")
-                fileAria2c.writeBytes(aria2cFile.readBytes())
-                Runtime.getRuntime().exec("chmod 777 " + fileAria2c.absoluteFile)
-                fileConf.delete()
                 val confFile = assets.open("aria2.conf")
                 fileConf.writeBytes(confFile.readBytes())
                 Runtime.getRuntime().exec("chmod 777 " + fileConf.absoluteFile)
@@ -77,9 +69,12 @@ class Aria2Service : Service() {
                 Log.e(TAG, "初始化aria2c文件失败:", e)
             }
         }
+        Log.e("path",fileAria2c.canonicalPath + " --conf-path=${fileConf.absoluteFile}")
         try {
-            Runtime.getRuntime().exec(fileAria2c.absolutePath + " --conf-path=${fileConf.absoluteFile}")
+            Runtime.getRuntime().exec(fileAria2c.canonicalPath + " --conf-path=${fileConf.absoluteFile}")
+            startForeground(1, notification)
         } catch (e: Exception) {
+            e.message?.let { Log.e("aria2c start", it) }
             Toast.makeText(applicationContext, "初始化aria2c服务失败:${e.message}", Toast.LENGTH_SHORT).show()
         }
 //        thread = Aria2Thread(fileAria2c.absolutePath, "--conf-path=${fileConf.absoluteFile}")

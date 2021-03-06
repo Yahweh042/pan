@@ -1,10 +1,10 @@
 package com.example.pan.model
 
 
-data class GlobalStatResponse(
+data class Aria2Response<T>(
     val id: String,
     val jsonrpc: String,
-    val result: GlobalStat,
+    val result: T,
 )
 
 data class GlobalStat(
