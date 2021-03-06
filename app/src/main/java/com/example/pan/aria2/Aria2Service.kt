@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -15,7 +14,6 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.example.pan.MainActivity
 import com.example.pan.R
-import com.example.pan.ui.Utils
 import java.io.File
 
 class Aria2Service : Service() {
@@ -34,7 +32,6 @@ class Aria2Service : Service() {
 
     private lateinit var fileAria2c: File
     private lateinit var fileConf: File
-    lateinit var thread: Aria2Thread
 
     override fun onBind(intent: Intent): IBinder = mBinder
 
@@ -55,7 +52,7 @@ class Aria2Service : Service() {
             .setContentTitle("Aria2c")
             .setContentText("Aria2c服务正在运行中")
             .setContentIntent(pi)
-            .setSmallIcon(R.drawable.baseline_cloud_download_black_24dp)
+            .setSmallIcon(R.drawable.ic_cloud_download_black_24dp)
             .build()
 
         fileAria2c = File(applicationInfo.nativeLibraryDir, "libaria2c.so")
@@ -77,9 +74,5 @@ class Aria2Service : Service() {
             e.message?.let { Log.e("aria2c start", it) }
             Toast.makeText(applicationContext, "初始化aria2c服务失败:${e.message}", Toast.LENGTH_SHORT).show()
         }
-//        thread = Aria2Thread(fileAria2c.absolutePath, "--conf-path=${fileConf.absoluteFile}")
-//        Thread(thread).start()
     }
-
-
 }

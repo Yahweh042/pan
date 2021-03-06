@@ -1,10 +1,12 @@
 package com.example.pan.ui.home
 
 import android.annotation.SuppressLint
+import android.net.http.SslError
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.SslErrorHandler
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
@@ -38,6 +40,7 @@ class HomeFragment : Fragment() {
         settings.allowFileAccess = true
         settings.domStorageEnabled = true
         settings.javaScriptEnabled = true
+//        settings.allowFileAccessFromFileURLs = true
 
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String) {
@@ -45,6 +48,14 @@ class HomeFragment : Fragment() {
 //                webView.loadUrl("javascript:document.getElementsByClassName('logo')[0].remove();")
 //                webView.loadUrl("javascript:document.getElementById('content-wrapper').setAttribute('style','padding-top:50px;min-height:683px;');")
 //                webView.loadUrl("javascript:document.querySelector('body > div.wrapper.ng-scope > header > nav > div.navbar-toolbar > ul > li:nth-child(10) > a').remove();")
+            }
+
+            override fun onReceivedSslError(
+                view: WebView?,
+                handler: SslErrorHandler?,
+                error: SslError?
+            ) {
+                handler?.proceed();
             }
         }
 

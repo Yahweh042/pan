@@ -2,21 +2,27 @@ package com.example.pan.ui.login
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.webkit.CookieManager
+import android.webkit.ValueCallback
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pan.databinding.ActivityLoginBinding
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
+import com.tencent.mmkv.MMKV
 import okhttp3.Cookie
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 class LoginActivity : AppCompatActivity() {
 
     val cookiePersistor by lazy { SharedPrefsCookiePersistor(applicationContext) }
+    var mmkv = MMKV.mmkvWithID("User", MMKV.MULTI_PROCESS_MODE)
     private lateinit var binding: ActivityLoginBinding
+
     companion object {
-        const val userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
+        const val userAgent =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36"
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -48,7 +54,14 @@ class LoginActivity : AppCompatActivity() {
                     }
                     print(cookies)
                     cookiePersistor.saveAll(cookies)
-
+                    loginView.evaluateJavascript("locals.get('bdstoken')", ValueCallback {
+                        with(mmkv) {
+                            this?.removeValueForKey("bdstoken")
+                            this?.encode("bdstoken", it.substring(1, it.length - 1))
+                        }
+                        Log.e("bdstoken", it.substring(1, it.length - 1))
+                    })
+                    this@LoginActivity.finish()
                 }
             }
 

@@ -6,6 +6,7 @@ import com.example.pan.http.PanRepository
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
+import com.tencent.mmkv.MMKV
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,6 +27,7 @@ class HttpModule {
     @Provides
     @Singleton
     fun provideHttpClient(@ApplicationContext context: Context): OkHttpClient {
+        val mmkv = MMKV.mmkvWithID("User", MMKV.MULTI_PROCESS_MODE)
         val cookieJar = PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(context))
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -38,7 +40,7 @@ class HttpModule {
                 url.addEncodedQueryParameter("t", "0.9272407329780168")
                 url.addEncodedQueryParameter("channel", "chunlei")
                 url.addEncodedQueryParameter("app_id", "250528")
-                url.addEncodedQueryParameter("bdstoken", "51bf181d1ee64ca6b9deda56ed0702e5")
+                url.addEncodedQueryParameter("bdstoken", mmkv?.decodeString("bdstoken"))
                 url.addEncodedQueryParameter("logid", "ODJFNDMxMDFFRjE3Q0Y0NjhFQ0EyMTQzM0NGOTg3NTc6Rkc9MQ==")
                 url.addEncodedQueryParameter("clienttype", "0")
                 val newBuilder = request.newBuilder()

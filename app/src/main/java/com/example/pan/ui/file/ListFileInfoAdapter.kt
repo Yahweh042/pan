@@ -32,9 +32,9 @@ class ListFileInfoAdapter :
             holder.binding.fileName.text = it.server_filename
             var simpleInfo = Utils.formatDate(it.local_mtime)
             if (it.isdir == 1) {
-                holder.binding.icon.setImageResource(R.drawable.baseline_folder_black_24dp)
+                holder.binding.icon.setImageResource(R.drawable.ic_folder_black_24dp)
             } else {
-                holder.binding.icon.setImageResource(R.drawable.baseline_file_black_24dp)
+                holder.binding.icon.setImageResource(R.drawable.ic_file_black_24dp)
                 simpleInfo += " ${Utils.formatBit(it.size)}"
             }
             holder.binding.simpleInfo.text = simpleInfo

@@ -89,4 +89,10 @@ class MainActivity : AppCompatActivity() {
 
 
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val aria2Service = Intent(this, Aria2Service::class.java)
+        stopService(aria2Service)
+    }
 }
