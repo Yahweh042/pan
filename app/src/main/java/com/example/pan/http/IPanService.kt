@@ -1,8 +1,8 @@
 package com.example.pan.http
 
 import com.example.pan.model.FileInfo
+import com.example.pan.model.FileMeta
 import com.example.pan.model.ResponseData
-import com.example.pan.model.TemplateVariable
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -19,18 +19,17 @@ interface IPanService {
         @Query("dir") dir: String,
     ): ResponseData<FileInfo>
 
+    @GET("/rest/2.0/xpan/file?method=list")
+    suspend fun list(
+        @Query("dir") dir: String,
+        @Query("order") order: String,
+        @Query("desc") desc: String,
+        @Query("start") start: Int,
+        @Query("limit") num: Int,
+    ): ResponseData<FileInfo>
 
-    @GET("/api/gettemplatevariable")
-    suspend fun getTemplateVariable(
-        @Query("fields") fields: List<String>
-    ): TemplateVariable
-
-    @GET("/api/download")
-    suspend fun download(
-        @Query("fidlist") fields: List<Long>,
-        @Query("sign") sign: String,
-        @Query("type") type: String,
-        @Query("vip") vip: Int
-    ): TemplateVariable
-
+    @GET("/rest/2.0/xpan/multimedia?method=filemetas&dlink=1")
+    suspend fun filemetas(
+        @Query("fsids") fsids: String
+    ): ResponseData<FileMeta>
 }

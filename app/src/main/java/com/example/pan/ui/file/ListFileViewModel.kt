@@ -1,15 +1,16 @@
 package com.example.pan.ui.file
 
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.example.pan.http.IPanService
 import com.example.pan.http.PanRepository
 import com.example.pan.model.FileInfo
+import com.example.pan.model.FileMeta
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class ListFileViewModel @ViewModelInject constructor(
     private val panRepository: PanRepository
@@ -20,6 +21,7 @@ class ListFileViewModel @ViewModelInject constructor(
     val fileInfoList: LiveData<PagedList<FileInfo>> = Transformations.switchMap(dirLiveData) {
         LivePagedListBuilder(ListFileDataSourceFactory(panRepository, it), 100).build()
     }
+    val filemeta = MutableLiveData<FileMeta>()
 
     fun changeDir(dir: String) {
         refreshStatus.postValue(true)
@@ -48,4 +50,15 @@ class ListFileViewModel @ViewModelInject constructor(
     fun stopRefresh() {
         refreshStatus.postValue(false)
     }
+
+    @ExperimentalCoroutinesApi
+    fun filemetas(fs_id: Long) {
+        viewModelScope.launch {
+            panRepository.download(fs_id).collect {
+                filemeta.postValue(it)
+            }
+
+        }
+    }
+
 }

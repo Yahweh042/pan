@@ -3,9 +3,6 @@ package com.example.pan.module
 import android.content.Context
 import com.example.pan.http.IPanService
 import com.example.pan.http.PanRepository
-import com.franmontiel.persistentcookiejar.PersistentCookieJar
-import com.franmontiel.persistentcookiejar.cache.SetCookieCache
-import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
 import com.tencent.mmkv.MMKV
 import dagger.Module
 import dagger.Provides
@@ -27,23 +24,16 @@ class HttpModule {
     @Provides
     @Singleton
     fun provideHttpClient(@ApplicationContext context: Context): OkHttpClient {
-        val mmkv = MMKV.mmkvWithID("User", MMKV.MULTI_PROCESS_MODE)
-        val cookieJar = PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(context))
+        val mmkv = MMKV.mmkvWithID("ACCOUNT", MMKV.MULTI_PROCESS_MODE)
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         return OkHttpClient.Builder()
-            .cookieJar(cookieJar)
             .addInterceptor(Interceptor {
                 val request = it.request()
                 val url = request.url.newBuilder()
-                url.addEncodedQueryParameter("web", "1")
-                url.addEncodedQueryParameter("t", "0.9272407329780168")
-                url.addEncodedQueryParameter("channel", "chunlei")
-                url.addEncodedQueryParameter("app_id", "250528")
-                url.addEncodedQueryParameter("bdstoken", mmkv?.decodeString("bdstoken"))
-                url.addEncodedQueryParameter("logid", "ODJFNDMxMDFFRjE3Q0Y0NjhFQ0EyMTQzM0NGOTg3NTc6Rkc9MQ==")
-                url.addEncodedQueryParameter("clienttype", "0")
+                 url.addEncodedQueryParameter("access_token", mmkv?.decodeString("access_token"))
                 val newBuilder = request.newBuilder()
+                newBuilder.addHeader("User-Agent", "pan.baidu.com")
                 newBuilder.url(url.build())
                 it.proceed(newBuilder.build())
             })

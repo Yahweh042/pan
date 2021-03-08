@@ -1,9 +1,6 @@
 package com.example.pan.aria2
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.os.Binder
@@ -37,6 +34,35 @@ class Aria2Service : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        val notification = buildNotification()
+
+        fileAria2c = File(applicationInfo.nativeLibraryDir, "libaria2c.so")
+        fileConf = File(filesDir, "aria2.conf")
+        fileConf.delete()
+        if (!fileConf.exists()) {
+            try {
+                val confFile = assets.open("aria2.conf")
+                fileConf.writeBytes(confFile.readBytes())
+                Runtime.getRuntime().exec("chmod 777 " + fileConf.absoluteFile)
+            } catch (e: Exception) {
+                Log.e(TAG, "初始化aria2c文件失败:", e)
+            }
+        }
+        Log.e(
+            "path",
+            fileAria2c.canonicalPath + " --conf-path=${fileConf.absoluteFile} --check-certificate=false"
+        )
+        try {
+            Runtime.getRuntime()
+                .exec(fileAria2c.canonicalPath + " --conf-path=${fileConf.absoluteFile} --check-certificate=false")
+            startForeground(1, notification)
+        } catch (e: Exception) {
+            Toast.makeText(applicationContext, "初始化aria2c服务失败:${e.message}", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+    private fun buildNotification(): Notification {
         val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -48,31 +74,15 @@ class Aria2Service : Service() {
         }
         val intent = Intent(this, MainActivity::class.java)
         val pi = PendingIntent.getActivity(this, 0, intent, 0)
-        val notification = NotificationCompat.Builder(this, "com.example.pan")
+        return NotificationCompat.Builder(this, "com.example.pan")
             .setContentTitle("Aria2c")
             .setContentText("Aria2c服务正在运行中")
             .setContentIntent(pi)
             .setSmallIcon(R.drawable.ic_cloud_download_black_24dp)
             .build()
+    }
 
-        fileAria2c = File(applicationInfo.nativeLibraryDir, "libaria2c.so")
-        fileConf = File(filesDir, "aria2.conf")
-        if (!fileConf.exists()) {
-            try {
-                val confFile = assets.open("aria2.conf")
-                fileConf.writeBytes(confFile.readBytes())
-                Runtime.getRuntime().exec("chmod 777 " + fileConf.absoluteFile)
-            } catch (e: Exception) {
-                Log.e(TAG, "初始化aria2c文件失败:", e)
-            }
-        }
-        Log.e("path",fileAria2c.canonicalPath + " --conf-path=${fileConf.absoluteFile}")
-        try {
-            Runtime.getRuntime().exec(fileAria2c.canonicalPath + " --conf-path=${fileConf.absoluteFile}")
-            startForeground(1, notification)
-        } catch (e: Exception) {
-            e.message?.let { Log.e("aria2c start", it) }
-            Toast.makeText(applicationContext, "初始化aria2c服务失败:${e.message}", Toast.LENGTH_SHORT).show()
-        }
+    fun storeAllCertificates() {
+
     }
 }

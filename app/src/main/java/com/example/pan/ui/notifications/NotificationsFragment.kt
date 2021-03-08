@@ -5,42 +5,65 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.example.pan.R
+import androidx.fragment.app.viewModels
+import com.baidu.oauth.sdk.auth.AuthInfo
+import com.baidu.oauth.sdk.auth.BdOauthSdk
+import com.baidu.oauth.sdk.auth.BdSsoHandler
+import com.baidu.oauth.sdk.callback.BdOauthCallback
+import com.baidu.oauth.sdk.dto.BdOauthDTO
+import com.baidu.oauth.sdk.result.BdOauthResult
+import com.example.pan.databinding.FragmentNotificationsBinding
 import com.example.pan.ui.login.LoginActivity
-import com.google.gson.Gson
-import kotlin.concurrent.thread
+import java.util.*
+
 
 class NotificationsFragment : Fragment() {
 
-    private lateinit var notificationsViewModel: NotificationsViewModel
+    private val mViewModel: NotificationsViewModel by viewModels()
+    private lateinit var binding: FragmentNotificationsBinding
+    private lateinit var bdSsoHandler: BdSsoHandler
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_notifications, container, false)
-        val textView: TextView = root.findViewById(R.id.text_notifications)
-        textView.text = "Login"
-        notificationsViewModel.globalStat.observe(viewLifecycleOwner, {
-            textView.text = Gson().toJson(it)
-        })
+    ): View {
+        binding = FragmentNotificationsBinding.inflate(layoutInflater, container, false)
+        return binding.root
+    }
 
-        textView.setOnClickListener {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.textNotifications.text = "Login"
+
+        binding.textNotifications.setOnClickListener {
             startActivity(Intent(context, LoginActivity::class.java))
         }
+    }
 
-        thread {
-//            notificationsViewModel.getGlobalStat()
+    private fun initSdk() {
+        val redirectUrl = ""
+        val scope = "basic"
+        val appKey = "yGey4TTRWdoglLxRz0X0fBMxYozXweN9"
+        val authInfo = AuthInfo(context, appKey, redirectUrl, scope)
+        BdOauthSdk.init(authInfo)
+        authInfo.isDebug(true)
+    }
 
-        }
+    private fun oauthLogin() {
+        bdSsoHandler = BdSsoHandler(requireActivity())
+        val bdOauthDTO = BdOauthDTO()
+        bdOauthDTO.oauthType = BdOauthDTO.OAUTH_TYPE_BOTH
+        bdOauthDTO.state = UUID.randomUUID().toString()
+        bdSsoHandler.authorize(bdOauthDTO, object : BdOauthCallback() {
+            override fun onSuccess(result: BdOauthResult) {
+                print(result)
+            }
 
-        return root
+            override fun onFailure(result: BdOauthResult) {
+                print(result)
+            }
+        })
     }
 }

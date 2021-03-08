@@ -20,11 +20,11 @@ class ListFileDataSource(
         callback: LoadInitialCallback<Int, FileInfo>
     ) {
         GlobalScope.launch(Dispatchers.IO) {
-            panRepository.list("time", "0", "0", 1, params.requestedLoadSize, dir).collect {
+            panRepository.list(dir, "time", "0", 0, params.requestedLoadSize).collect {
                 if (it.errno == 0) {
-                    callback.onResult(it.list, null, 2)
+                    callback.onResult(it.list, null, params.requestedLoadSize)
                 } else {
-                    callback.onResult(arrayListOf(), null, 2)
+                    callback.onResult(arrayListOf(), null, params.requestedLoadSize)
                 }
             }
         }
@@ -37,12 +37,12 @@ class ListFileDataSource(
     @ExperimentalCoroutinesApi
     override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, FileInfo>) {
         GlobalScope.launch(Dispatchers.IO) {
-            panRepository.list("time", "0", "0", params.key, params.requestedLoadSize, dir)
+            panRepository.list(dir, "time", "0", params.key, params.requestedLoadSize)
                 .collect {
                     if (it.errno == 0) {
-                        callback.onResult(it.list, params.key + 1)
+                        callback.onResult(it.list, params.key + params.requestedLoadSize)
                     } else {
-                        callback.onResult(arrayListOf(), params.key + 1)
+                        callback.onResult(arrayListOf(), params.key + params.requestedLoadSize)
                     }
                 }
 

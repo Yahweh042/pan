@@ -11,11 +11,11 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pan.R
+import com.example.pan.aria2.Aria2Manager
 import com.example.pan.databinding.FragmentDashboardBinding
 import com.example.pan.model.FileInfo
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
 @AndroidEntryPoint
@@ -48,10 +48,20 @@ class ListFileFragment : Fragment() {
         mViewModel.refreshStatus.observe(viewLifecycleOwner) {
             binding.refreshLayout.isRefreshing = it
         }
+        mViewModel.filemeta.observe(viewLifecycleOwner) {
+            AlertDialog.Builder(this@ListFileFragment.requireContext())
+                .setTitle(it.filename)
+                .setMessage(it.dlink)
+                .setPositiveButton("下载") { _, _ ->
+                    Aria2Manager.download(it.dlink, it.filename)
+                }
+                .create().show()
+        }
         binding = FragmentDashboardBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
+    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView = binding.recyclerView
@@ -78,8 +88,7 @@ class ListFileFragment : Fragment() {
                 if (item.isdir == 1) {
                     mViewModel.changeDir(item.path)
                 } else {
-                    AlertDialog.Builder(this@ListFileFragment.requireContext())
-                        .setMessage(Gson().toJson(item)).create().show()
+                    mViewModel.filemetas(item.fs_id)
                 }
             }
 
