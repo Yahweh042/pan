@@ -11,7 +11,10 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.example.pan.MainActivity
 import com.example.pan.R
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
+import kotlin.concurrent.thread
 
 class Aria2Service : Service() {
 
@@ -53,8 +56,19 @@ class Aria2Service : Service() {
             fileAria2c.canonicalPath + " --conf-path=${fileConf.absoluteFile} --check-certificate=false"
         )
         try {
-            Runtime.getRuntime()
+            val exec = Runtime.getRuntime()
                 .exec(fileAria2c.canonicalPath + " --conf-path=${fileConf.absoluteFile} --check-certificate=false")
+            thread {
+                val reader = BufferedReader(InputStreamReader(exec.inputStream))
+                var line: String
+                do {
+                    line = reader.readLine()
+                    if (line == null) {
+                        break
+                    }
+                    Log.e("process", line)
+                } while (true)
+            }
             startForeground(1, notification)
         } catch (e: Exception) {
             Toast.makeText(applicationContext, "初始化aria2c服务失败:${e.message}", Toast.LENGTH_SHORT)

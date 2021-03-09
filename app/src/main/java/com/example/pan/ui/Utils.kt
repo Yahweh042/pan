@@ -20,13 +20,17 @@ object Utils {
         return simpleDateFormat.format(Date(time * 1000))
     }
 
+    fun formatBit(input: String): String {
+        return formatBit(input.toLong())
+    }
+
     fun formatBit(input: Long): String {
         if (input <= 0) {
             return "0B"
         }
         val units = arrayListOf("B", "KB", "MB", "GB", "TB")
         val digitGroups = (log10(input.toDouble()) / log10(1024.0)).toInt()
-        return DecimalFormat("#,##0.#").format(input / 1024.0.pow(digitGroups.toDouble()))
+        return DecimalFormat("#,##0.##").format(input / 1024.0.pow(digitGroups.toDouble()))
             .toString() + " " + units[digitGroups]
 
     }

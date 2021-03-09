@@ -53,7 +53,7 @@ class ListFileFragment : Fragment() {
                 .setTitle(it.filename)
                 .setMessage(it.dlink)
                 .setPositiveButton("下载") { _, _ ->
-                    Aria2Manager.download(it.dlink, it.filename)
+                    mViewModel.download(it.dlink, it.filename)
                 }
                 .create().show()
         }

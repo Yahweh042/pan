@@ -4,11 +4,11 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import com.example.pan.aria2.Aria2Manager
 import com.example.pan.http.PanRepository
 import com.example.pan.model.FileInfo
 import com.example.pan.model.FileMeta
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -58,6 +58,12 @@ class ListFileViewModel @ViewModelInject constructor(
                 filemeta.postValue(it)
             }
 
+        }
+    }
+
+    fun download(url: String, fileName: String) {
+        viewModelScope.launch {
+            Aria2Manager.addUri(url, fileName)
         }
     }
 

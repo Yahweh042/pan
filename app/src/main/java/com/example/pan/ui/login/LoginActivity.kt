@@ -45,7 +45,6 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
                 return super.shouldOverrideUrlLoading(view, request)
-
             }
 
         }
