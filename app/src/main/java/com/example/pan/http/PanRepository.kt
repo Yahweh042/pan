@@ -1,7 +1,6 @@
 package com.example.pan.http
 
 import android.util.Log
-import com.example.pan.model.FileMeta
 import com.example.pan.model.ResponseData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,6 +14,15 @@ import javax.inject.Inject
 class PanRepository @Inject constructor(
     val service: IPanService
 ) {
+
+    @ExperimentalCoroutinesApi
+    fun getUserInfo() = flow {
+        val userInfo = service.getUserInfo()
+        val quota = service.quota()
+        userInfo.used = quota.used.toString()
+        userInfo.total = quota.total.toString()
+        emit(userInfo)
+    }.flowOn(Dispatchers.IO)
 
     @ExperimentalCoroutinesApi
     fun list(

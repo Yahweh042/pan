@@ -1,6 +1,8 @@
 package com.example.pan.ui.home
 
 import android.annotation.SuppressLint
+import android.content.res.Resources
+import android.content.res.loader.ResourcesLoader
 import android.net.http.SslError
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,13 +12,16 @@ import android.webkit.SslErrorHandler
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.example.pan.MainViewModel
 import com.example.pan.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
 
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by viewModels()
 
     override fun onCreateView(
@@ -30,7 +35,7 @@ class HomeFragment : Fragment() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        mainViewModel.setTitle(getString(R.string.title_home))
 
         val webView = view.findViewById<WebView>(R.id.web_view)
 

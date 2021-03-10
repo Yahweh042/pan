@@ -8,6 +8,7 @@ import com.example.pan.aria2.Aria2Manager
 import com.example.pan.http.PanRepository
 import com.example.pan.model.FileInfo
 import com.example.pan.model.FileMeta
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -62,7 +63,7 @@ class ListFileViewModel @ViewModelInject constructor(
     }
 
     fun download(url: String, fileName: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             Aria2Manager.addUri(url, fileName)
         }
     }

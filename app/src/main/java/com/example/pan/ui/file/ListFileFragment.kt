@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pan.MainViewModel
 import com.example.pan.aria2.Aria2Manager
 import com.example.pan.databinding.FragmentDashboardBinding
 import com.example.pan.model.FileInfo
@@ -21,6 +23,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class ListFileFragment : Fragment() {
 
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val mViewModel: ListFileViewModel by viewModels()
     private val adapter = ListFileInfoAdapter()
     private lateinit var binding: FragmentDashboardBinding
@@ -35,7 +38,7 @@ class ListFileFragment : Fragment() {
             mViewModel.stopRefresh()
         }
         mViewModel.dirLiveData.observe(viewLifecycleOwner) {
-            binding.toolbar.title = it
+            mainViewModel.setTitle(it)
 //            if ("/" != it) {
 //                binding.toolbar.setNavigationIcon(R.drawable.ic_home_black_24dp)
 //                binding.toolbar.setNavigationOnClickListener {

@@ -4,5 +4,9 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="fileicon">FileIcon</string>
-    <string name="title_file">文件</string>
+    <string name="title_file">文件管理</string>
+    <string name="title_download">下载列表</string>
+    <string name="open">打开</string>
+    <string name="close">关闭</string>
+    <string name="todo">TODO</string>
 </resources>

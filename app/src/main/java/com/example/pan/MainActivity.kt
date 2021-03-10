@@ -7,23 +7,33 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.bumptech.glide.Glide
 import com.example.pan.aria2.Aria2Service
+import com.example.pan.databinding.ActivityMainBinding
 import com.example.pan.ui.file.ListFileFragment
 import com.example.pan.ui.home.HomeFragment
 import com.example.pan.ui.notifications.NotificationsFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.tbruyelle.rxpermissions3.RxPermissions
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private val mainViewModel: MainViewModel by viewModels()
     private lateinit var mBinder: Aria2Service.Aria2Binder
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -36,42 +46,15 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
-        val viewPager: ViewPager = findViewById(R.id.view_pager)
-        val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
-        viewPager.requestDisallowInterceptTouchEvent(true)
-        viewPager.offscreenPageLimit = 3
-        viewPager.adapter = object : FragmentStatePagerAdapter(supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-            override fun getCount(): Int = 3
+        mainViewModel.getUserInfo()
 
-            override fun getItem(position: Int): Fragment {
-                return when (position) {
-                    0 -> HomeFragment()
-                    1 -> ListFileFragment()
-                    else -> NotificationsFragment()
-                }
-            }
-
-        }
-        viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
-
-            override fun onPageSelected(position: Int) {
-                bottomNavigationView.menu.getItem(position).isChecked = true
-            }
-
-        })
-
-        bottomNavigationView.setOnNavigationItemSelectedListener {
-            when (it.itemId) {
-                R.id.navigation_home -> viewPager.setCurrentItem(0, false)
-                R.id.navigation_dashboard -> viewPager.setCurrentItem(1, false)
-                R.id.navigation_notifications -> viewPager.setCurrentItem(2, false)
-            }
-            false
-        }
+        initViewAndLintener()
 
         val permissions = RxPermissions(this)
         permissions.request(
@@ -87,7 +70,63 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    }
 
+    private fun initViewAndLintener() = with(binding) {
+        val actionBarDrawerToggle =
+            ActionBarDrawerToggle(
+                this@MainActivity,
+                binding.drawerLayout,
+                binding.toolbar,
+                R.string.open,
+                R.string.close
+            )
+        actionBarDrawerToggle.syncState()
+
+        viewPager.requestDisallowInterceptTouchEvent(true)
+        viewPager.offscreenPageLimit = 3
+        viewPager.adapter = object : FragmentStatePagerAdapter(
+            supportFragmentManager,
+            BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+        ) {
+            override fun getCount(): Int = 3
+            override fun getItem(position: Int): Fragment {
+                return when (position) {
+                    0 -> HomeFragment()
+                    1 -> ListFileFragment()
+                    else -> NotificationsFragment()
+                }
+            }
+
+        }
+        viewPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+            override fun onPageSelected(position: Int) {
+                navView.menu.getItem(position).isChecked = true
+            }
+        })
+        navView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.nav_home -> viewPager.setCurrentItem(0, false)
+                R.id.nav_file -> viewPager.setCurrentItem(1, false)
+                R.id.nav_download -> viewPager.setCurrentItem(2, false)
+            }
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
+
+        mainViewModel.title.observe(this@MainActivity) {
+            toolbar.title = it
+        }
+
+        mainViewModel.userInfo.observe(this@MainActivity) {
+            val headerView = navView.getHeaderView(0)
+            val headerImg = headerView.findViewById<ImageView>(R.id.headimgurl)
+            val userName = headerView.findViewById<TextView>(R.id.user_name)
+
+            userName.text = it.netdisk_name
+
+            Glide.with(this@MainActivity).load(it.avatar_url).into(headerImg)
+        }
     }
 
     override fun onDestroy() {

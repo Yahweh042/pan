@@ -1,23 +1,17 @@
 package com.example.pan.http
 
-import com.example.pan.model.FileInfo
-import com.example.pan.model.FileMeta
-import com.example.pan.model.ResponseData
+import com.example.pan.model.*
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 
 interface IPanService {
 
-    @GET("/api/list")
-    suspend fun list(
-        @Query("order") order: String,
-        @Query("desc") desc: String,
-        @Query("showempty") showEmpty: String,
-        @Query("page") page: Int,
-        @Query("num") num: Int,
-        @Query("dir") dir: String,
-    ): ResponseData<FileInfo>
+    @GET("/rest/2.0/xpan/nas?method=uinfo")
+    suspend fun getUserInfo(): UserInfo
+
+    @GET("/api/quota")
+    suspend fun quota(): Quota
 
     @GET("/rest/2.0/xpan/file?method=list")
     suspend fun list(
