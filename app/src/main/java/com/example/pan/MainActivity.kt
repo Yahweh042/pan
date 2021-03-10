@@ -5,7 +5,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.widget.ImageView
@@ -13,7 +12,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -49,7 +47,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
     @ExperimentalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,15 +55,13 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.getUserInfo()
 
-        initViewAndLintener()
-
+        initViewAndListener()
 
 
         val permissions = RxPermissions(this)
         permissions.request(
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.MANAGE_EXTERNAL_STORAGE
+            Manifest.permission.READ_EXTERNAL_STORAGE
         ).subscribe {
             if (it) {
                 val aria2Service = Intent(this, Aria2Service::class.java)
@@ -79,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun initViewAndLintener() = with(binding) {
+    private fun initViewAndListener() = with(binding) {
         val actionBarDrawerToggle =
             ActionBarDrawerToggle(
                 this@MainActivity,
@@ -113,9 +108,18 @@ class MainActivity : AppCompatActivity() {
         })
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.nav_home -> viewPager.setCurrentItem(0, false)
-                R.id.nav_file -> viewPager.setCurrentItem(1, false)
-                R.id.nav_download -> viewPager.setCurrentItem(2, false)
+                R.id.nav_home -> {
+                    viewPager.setCurrentItem(0, false)
+                    toolbar.title = getString(R.string.title_home)
+                }
+                R.id.nav_file -> {
+                    viewPager.setCurrentItem(1, false)
+                    toolbar.title = getString(R.string.title_file)
+                }
+                R.id.nav_download -> {
+                    viewPager.setCurrentItem(2, false)
+                    toolbar.title = getString(R.string.title_download)
+                }
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true

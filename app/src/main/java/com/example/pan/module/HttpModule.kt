@@ -1,8 +1,8 @@
 package com.example.pan.module
 
+import com.example.pan.data.Account
 import com.example.pan.http.IPanService
 import com.example.pan.http.PanRepository
-import com.tencent.mmkv.MMKV
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,14 +22,13 @@ class HttpModule {
     @Provides
     @Singleton
     fun provideHttpClient(): OkHttpClient {
-        val mmkv = MMKV.mmkvWithID("ACCOUNT", MMKV.MULTI_PROCESS_MODE)
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         return OkHttpClient.Builder()
             .addInterceptor(Interceptor {
                 val request = it.request()
                 val url = request.url.newBuilder()
-                 url.addQueryParameter("access_token", mmkv?.decodeString("access_token", ""))
+                url.addQueryParameter("access_token", Account.getAccessToken())
                 val newBuilder = request.newBuilder()
                 newBuilder.addHeader("User-Agent", "pan.baidu.com")
                 newBuilder.url(url.build())

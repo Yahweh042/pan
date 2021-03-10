@@ -7,12 +7,11 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import com.example.pan.data.Account
 import com.example.pan.databinding.ActivityLoginBinding
-import com.tencent.mmkv.MMKV
 
 class LoginActivity : AppCompatActivity() {
 
-    var mmkv = MMKV.mmkvWithID("ACCOUNT", MMKV.MULTI_PROCESS_MODE)
     private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +39,7 @@ class LoginActivity : AppCompatActivity() {
                 request?.url?.fragment?.split("&")?.forEach {
                     if (it.contains("access_token")) {
                         Log.d("baidu oauth", it)
-                        mmkv?.encode("access_token", it.split("=")[1])
+                        Account.setAccessToken(it.split("=")[1])
                         this@LoginActivity.finish()
                     }
                 }

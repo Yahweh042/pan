@@ -1,6 +1,7 @@
 package com.example.pan.aria2
 
 import android.util.Log
+import com.example.pan.data.Account
 import com.example.pan.model.Aria2Response
 import com.example.pan.model.TaskInfo
 import com.google.gson.Gson
@@ -13,7 +14,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 object Aria2Manager {
 
     private const val RPC_URL = "http://127.0.0.1:6800/jsonrpc"
-    private val mmkv = MMKV.mmkvWithID("ACCOUNT", MMKV.MULTI_PROCESS_MODE)
 
     fun addUri(url: String, fileName: String) {
         try {
@@ -27,7 +27,7 @@ object Aria2Manager {
             map["method"] = "aria2.addUri"
             map["id"] = "QXJpYU5nXzE2MTM4OTMxMjBfMC4wODg4ODM0MTIzNDc0Mzc4"
             map["params"] = arrayListOf(
-                arrayListOf("$url&access_token=${mmkv?.decodeString("access_token")}"),
+                arrayListOf("$url&access_token=${Account.getAccessToken()}"),
                 option
             )
             val request = Request.Builder()
@@ -50,11 +50,10 @@ object Aria2Manager {
             val httpClient = OkHttpClient.Builder().build()
             val map = HashMap<String, Any>()
             map["jsonrpc"] = "2.0"
-            map["method"] = "aria2.tellStopped"
+            map["method"] = "aria2.tellStatus"
             map["id"] = "QXJpYU5nXzE2MTM4OTMxMjBfMC4wODg4ODM0MTIzNDc0Mzc4"
             map["params"] = arrayListOf(
-                -1,
-                1000,
+                arrayListOf("cfeb222b69872392", "312bd7e9cec2fda3"),
                 arrayListOf("gid", "files", "totalLength", "completedLength")
             )
             val request = Request.Builder()
