@@ -21,6 +21,7 @@ class PanRepository @Inject constructor(
         val quota = service.quota()
         userInfo.used = quota.used.toString()
         userInfo.total = quota.total.toString()
+        userInfo.percent = quota.percent
         emit(userInfo)
     }.flowOn(Dispatchers.IO)
 

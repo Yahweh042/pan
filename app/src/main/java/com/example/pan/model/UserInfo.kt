@@ -10,7 +10,8 @@ data class UserInfo(
     val baidu_name: String,
     val netdisk_name: String,
     val vip_type: Int,
-    val uk: Int
+    val uk: Int,
+    var percent: Int
 ) {
     var used: String = ""
         set(value) {
@@ -28,4 +29,7 @@ data class Quota(
     val used: Long,
     val total: Long,
     val request_id: Long
-)
+) {
+    val percent: Int
+        get() = (used.toDouble() / total.toDouble() * 100).toInt()
+}

@@ -79,9 +79,4 @@ object Aria2Manager {
         }
     }
 
-    @ExperimentalStdlibApi
-    @JvmStatic
-    fun main(args: Array<String>) {
-        tellStatus()
-    }
 }

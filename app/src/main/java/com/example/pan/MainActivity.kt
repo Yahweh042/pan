@@ -8,6 +8,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -122,8 +123,12 @@ class MainActivity : AppCompatActivity() {
             val headerView = navView.getHeaderView(0)
             val headerImg = headerView.findViewById<ImageView>(R.id.headimgurl)
             val userName = headerView.findViewById<TextView>(R.id.user_name)
+            val quato = headerView.findViewById<TextView>(R.id.quato)
+            val progressBar = headerView.findViewById<ProgressBar>(R.id.progress_bar)
 
             userName.text = it.netdisk_name
+            quato.text = "${it.used}/${it.total}"
+            progressBar.progress = it.percent
 
             Glide.with(this@MainActivity).load(it.avatar_url).into(headerImg)
         }
