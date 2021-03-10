@@ -1,6 +1,5 @@
 package com.example.pan.module
 
-import android.content.Context
 import com.example.pan.http.IPanService
 import com.example.pan.http.PanRepository
 import com.tencent.mmkv.MMKV
@@ -8,7 +7,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -31,7 +29,7 @@ class HttpModule {
             .addInterceptor(Interceptor {
                 val request = it.request()
                 val url = request.url.newBuilder()
-                 url.addEncodedQueryParameter("access_token", mmkv?.decodeString("access_token"))
+                 url.addQueryParameter("access_token", mmkv?.decodeString("access_token", ""))
                 val newBuilder = request.newBuilder()
                 newBuilder.addHeader("User-Agent", "pan.baidu.com")
                 newBuilder.url(url.build())

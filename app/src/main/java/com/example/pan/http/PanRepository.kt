@@ -23,6 +23,8 @@ class PanRepository @Inject constructor(
         userInfo.total = quota.total.toString()
         userInfo.percent = quota.percent
         emit(userInfo)
+    }.catch {
+        it.message?.let { it1 -> Log.e("http", it1) }
     }.flowOn(Dispatchers.IO)
 
     @ExperimentalCoroutinesApi
