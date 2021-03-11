@@ -12,7 +12,7 @@ import retrofit2.http.Query
 import javax.inject.Inject
 
 class PanRepository @Inject constructor(
-    val service: IPanService
+    val service: ApiService
 ) {
 
     @ExperimentalCoroutinesApi

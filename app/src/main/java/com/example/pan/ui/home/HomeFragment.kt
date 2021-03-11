@@ -37,35 +37,35 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         mainViewModel.setTitle(getString(R.string.title_home))
 
-        val webView = view.findViewById<WebView>(R.id.web_view)
-
-        val settings = webView.settings
-
-        settings.builtInZoomControls = true
-        settings.allowContentAccess = true
-        settings.allowFileAccess = true
-        settings.domStorageEnabled = true
-        settings.javaScriptEnabled = true
-//        settings.allowFileAccessFromFileURLs = true
-
-        webView.webViewClient = object : WebViewClient() {
-            override fun onPageFinished(view: WebView, url: String) {
-                super.onPageFinished(view, url)
-//                webView.loadUrl("javascript:document.getElementsByClassName('logo')[0].remove();")
-//                webView.loadUrl("javascript:document.getElementById('content-wrapper').setAttribute('style','padding-top:50px;min-height:683px;');")
-//                webView.loadUrl("javascript:document.querySelector('body > div.wrapper.ng-scope > header > nav > div.navbar-toolbar > ul > li:nth-child(10) > a').remove();")
-            }
-
-            override fun onReceivedSslError(
-                view: WebView?,
-                handler: SslErrorHandler?,
-                error: SslError?
-            ) {
-                handler?.proceed()
-            }
-        }
-
-
-        webView.loadUrl("file:///android_asset/index.html#!/settings/rpc/set?protocol=http&host=127.0.0.1&port=6800&interface=jsonrpc")
+//         val webView = view.findViewById<WebView>(R.id.web_view)
+//
+//         val settings = webView.settings
+//
+//         settings.builtInZoomControls = true
+//         settings.allowContentAccess = true
+//         settings.allowFileAccess = true
+//         settings.domStorageEnabled = true
+//         settings.javaScriptEnabled = true
+// //        settings.allowFileAccessFromFileURLs = true
+//
+//         webView.webViewClient = object : WebViewClient() {
+//             override fun onPageFinished(view: WebView, url: String) {
+//                 super.onPageFinished(view, url)
+// //                webView.loadUrl("javascript:document.getElementsByClassName('logo')[0].remove();")
+// //                webView.loadUrl("javascript:document.getElementById('content-wrapper').setAttribute('style','padding-top:50px;min-height:683px;');")
+// //                webView.loadUrl("javascript:document.querySelector('body > div.wrapper.ng-scope > header > nav > div.navbar-toolbar > ul > li:nth-child(10) > a').remove();")
+//             }
+//
+//             override fun onReceivedSslError(
+//                 view: WebView?,
+//                 handler: SslErrorHandler?,
+//                 error: SslError?
+//             ) {
+//                 handler?.proceed()
+//             }
+//         }
+//
+//
+//         webView.loadUrl("file:///android_asset/index.html#!/settings/rpc/set?protocol=http&host=127.0.0.1&port=6800&interface=jsonrpc")
     }
 }

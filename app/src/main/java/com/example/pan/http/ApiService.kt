@@ -1,11 +1,11 @@
 package com.example.pan.http
 
 import com.example.pan.model.*
-import retrofit2.http.GET
-import retrofit2.http.Query
+import okhttp3.RequestBody
+import retrofit2.http.*
 
 
-interface IPanService {
+interface ApiService {
 
     @GET("/rest/2.0/xpan/nas?method=uinfo")
     suspend fun getUserInfo(): UserInfo
@@ -26,4 +26,17 @@ interface IPanService {
     suspend fun filemetas(
         @Query("fsids") fsids: String
     ): ResponseData<FileMeta>
+
+    @Headers("baseUrl: aria2")
+    @POST("/")
+    suspend fun tellStopped(@Body body: RequestBody): Aria2Response<List<Aria2TaskInfo>>
+
+    @Headers("baseUrl: aria2")
+    @POST("/")
+    suspend fun tellActive(@Body body: RequestBody): Aria2Response<List<Aria2TaskInfo>>
+
+    @Headers("baseUrl: aria2")
+    @POST("/")
+    suspend fun addUri(@Body body: RequestBody): Aria2Response<String>
+
 }

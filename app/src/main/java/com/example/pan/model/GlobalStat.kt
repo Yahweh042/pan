@@ -1,12 +1,26 @@
 package com.example.pan.model
 
-import com.example.pan.ui.Utils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
 
 
-data class Aria2Response<T>(
-    val id: String,
-    val jsonrpc: String,
+data class Aria2Response<out T>(
+    val id: String = "",
+    val jsonrpc: String = "",
     val result: T,
+    val error: Aria2Error
+)
+
+suspend fun <T : Any> Aria2Response<T>.doError(errorBlock: (suspend CoroutineScope.(String) -> Unit)? = null): Aria2Response<T> {
+    return coroutineScope {
+        errorBlock?.invoke(this, this@doError.error.message)
+        this@doError
+    }
+}
+
+data class Aria2Error(
+    val code: Int,
+    val message: String
 )
 
 data class GlobalStat(
@@ -19,16 +33,21 @@ data class GlobalStat(
 )
 
 
-data class TaskInfo(
+data class Aria2TaskInfo(
+    val bitfield: String,
     val gid: String,
+    val connections: String,
+    val status: String,
+    val errorCode: String,
+    val errorMessage: String,
+    val downloadSpeed: String,
+    val totalLength: String,
+    val completedLength: String,
+    val dir: String,
+    val files: List<Aria2File>
+)
 
-    ) {
-    val totalLength: String = "0"
-        get() {
-            return Utils.formatBit(field)
-        }
-    val completedLength: String = "0"
-        get() {
-            return Utils.formatBit(field)
-        }
-}
+data class Aria2File(
+    val gid: String
+
+)

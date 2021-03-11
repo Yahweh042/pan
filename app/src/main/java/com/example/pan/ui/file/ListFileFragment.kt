@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pan.MainViewModel
-import com.example.pan.aria2.Aria2Manager
 import com.example.pan.databinding.FragmentDashboardBinding
 import com.example.pan.model.FileInfo
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,6 +27,7 @@ class ListFileFragment : Fragment() {
     private val adapter = ListFileInfoAdapter()
     private lateinit var binding: FragmentDashboardBinding
 
+    @ExperimentalCoroutinesApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -77,8 +77,6 @@ class ListFileFragment : Fragment() {
                 DividerItemDecoration.VERTICAL
             )
         )
-        view.isFocusableInTouchMode = true
-        view.requestFocus()
         view.setOnKeyListener { _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                 mViewModel.onBackDir()

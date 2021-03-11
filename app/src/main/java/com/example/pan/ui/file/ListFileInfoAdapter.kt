@@ -14,7 +14,7 @@ import com.example.pan.ui.base.BaseViewHolder
 class ListFileInfoAdapter :
     PagedListAdapter<FileInfo, BaseViewHolder<ItemFileInfoBinding>>(Callback()) {
 
-        private var itemClickListener: OnItemClickListener? = null
+    private var itemClickListener: OnItemClickListener? = null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -48,7 +48,7 @@ class ListFileInfoAdapter :
         fun onItemClick(item: FileInfo)
     }
 
-    fun setOnItemClickListener(listener:OnItemClickListener) {
+    fun setOnItemClickListener(listener: OnItemClickListener) {
         this.itemClickListener = listener
     }
 

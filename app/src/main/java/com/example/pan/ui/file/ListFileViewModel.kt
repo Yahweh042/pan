@@ -1,20 +1,24 @@
 package com.example.pan.ui.file
 
+import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.example.pan.aria2.Aria2Manager
+import com.example.pan.aria2.Aria2Repository
 import com.example.pan.http.PanRepository
 import com.example.pan.model.FileInfo
 import com.example.pan.model.FileMeta
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class ListFileViewModel @ViewModelInject constructor(
-    private val panRepository: PanRepository
+    private val panRepository: PanRepository,
+    private val aria2Repository: Aria2Repository
 ) : ViewModel() {
 
     val refreshStatus = MutableLiveData(false)
@@ -62,9 +66,16 @@ class ListFileViewModel @ViewModelInject constructor(
         }
     }
 
+    @ExperimentalCoroutinesApi
     fun download(url: String, fileName: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Aria2Manager.addUri(url, fileName)
+            aria2Repository.addUri(url, fileName).onStart {
+                Log.e("addUri", "下载开始")
+            }.catch {
+                it.message?.let { it1 -> Log.e("addUri", it1) }
+            }.collect {
+
+            }
         }
     }
 

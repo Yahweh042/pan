@@ -1,22 +1,53 @@
 package com.example.pan.ui.notifications
 
+import android.util.Log
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pan.aria2.Aria2Repository
+import com.example.pan.model.DownloadTaskInfo
 import com.example.pan.model.GlobalStat
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import okhttp3.Dispatcher
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
+import java.util.*
 import kotlin.concurrent.thread
 
-class NotificationsViewModel : ViewModel() {
+class NotificationsViewModel @ViewModelInject constructor(
+    private val aria2Repository: Aria2Repository
+) : ViewModel() {
 
     val globalStat = MutableLiveData<GlobalStat>()
+    val stoppedTask = MutableLiveData<List<DownloadTaskInfo>>()
+    val activeTask = MutableLiveData<List<DownloadTaskInfo>>()
+
+    @ExperimentalCoroutinesApi
+    fun tellActive() {
+        viewModelScope.launch(Dispatchers.IO) {
+            aria2Repository.tellActive().catch {
+                it.message?.let { it1 -> Log.d("tellActive", it1) }
+            }.collect {
+                activeTask.postValue(ArrayList(it))
+                Log.d("tellActive", Gson().toJson(it))
+            }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun tellStopped() {
+        viewModelScope.launch(Dispatchers.IO) {
+            aria2Repository.tellStopped().catch {
+                it.message?.let { it1 -> Log.d("tellActive", it1) }
+            }.collect {
+                stoppedTask.postValue(ArrayList(it))
+                Log.d("tellStopped", Gson().toJson(it))
+            }
+        }
+    }
 
     fun getGlobalStat() {
 

@@ -23,6 +23,7 @@ import com.example.pan.aria2.Aria2Service
 import com.example.pan.databinding.ActivityMainBinding
 import com.example.pan.ui.file.ListFileFragment
 import com.example.pan.ui.home.HomeFragment
+import com.example.pan.ui.login.LoginActivity
 import com.example.pan.ui.notifications.NotificationsFragment
 import com.tbruyelle.rxpermissions3.RxPermissions
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,8 +59,7 @@ class MainActivity : AppCompatActivity() {
         initViewAndListener()
 
 
-        val permissions = RxPermissions(this)
-        permissions.request(
+        RxPermissions(this).request(
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE
         ).subscribe {
@@ -129,12 +129,18 @@ class MainActivity : AppCompatActivity() {
             toolbar.title = it
         }
 
+        val headerView = navView.getHeaderView(0)
+        val headerImg = headerView.findViewById<ImageView>(R.id.headimgurl)
+        val userName = headerView.findViewById<TextView>(R.id.user_name)
+        val quato = headerView.findViewById<TextView>(R.id.quato)
+        val progressBar = headerView.findViewById<ProgressBar>(R.id.progress_bar)
+
+        headerView.setOnClickListener {
+            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+        }
+
         mainViewModel.userInfo.observe(this@MainActivity) {
-            val headerView = navView.getHeaderView(0)
-            val headerImg = headerView.findViewById<ImageView>(R.id.headimgurl)
-            val userName = headerView.findViewById<TextView>(R.id.user_name)
-            val quato = headerView.findViewById<TextView>(R.id.quato)
-            val progressBar = headerView.findViewById<ProgressBar>(R.id.progress_bar)
+
 
             userName.text = it.netdisk_name
             quato.text = "${it.used}/${it.total}"
