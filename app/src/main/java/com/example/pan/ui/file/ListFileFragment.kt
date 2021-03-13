@@ -38,7 +38,7 @@ class ListFileFragment : Fragment() {
             mViewModel.stopRefresh()
         }
         mViewModel.dirLiveData.observe(viewLifecycleOwner) {
-            mainViewModel.setTitle(it)
+//            mainViewModel.setTitle(it)
 //            if ("/" != it) {
 //                binding.toolbar.setNavigationIcon(R.drawable.ic_home_black_24dp)
 //                binding.toolbar.setNavigationOnClickListener {

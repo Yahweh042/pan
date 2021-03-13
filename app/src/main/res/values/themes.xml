@@ -13,12 +13,14 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@color/white</item>
+        <item name="android:forceDarkAllowed">true</item>
+        <item name="colorControlNormal">@color/white</item>
+
     </style>
 
 
     <style name="Theme.Toolbar" parent="Theme.Pan">
         <item name="android:textColorPrimary">@color/white</item>
-        <item name="colorControlNormal">@color/white</item>
         <item name="android:textColorSecondary">@color/white</item>
     </style>
 </resources>

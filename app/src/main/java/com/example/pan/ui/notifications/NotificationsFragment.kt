@@ -15,6 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 class NotificationsFragment : Fragment() {
 
     private lateinit var binding: FragmentNotificationsBinding
+    private val tabTitles = arrayListOf("下载中","已完成")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,8 +32,9 @@ class NotificationsFragment : Fragment() {
 
         with(binding) {
 
-            tabLayout.addTab(tabLayout.newTab().setText("下载中"))
-            tabLayout.addTab(tabLayout.newTab().setText("已完成"))
+            for (item in tabTitles) {
+                tabLayout.addTab(tabLayout.newTab().setText(item))
+            }
 
             viewPager.adapter = object :
                 FragmentStatePagerAdapter(this@NotificationsFragment.childFragmentManager) {
@@ -41,8 +43,7 @@ class NotificationsFragment : Fragment() {
                 override fun getItem(position: Int): Fragment =
                     DownloadListFragment.getInstance(position)
 
-                override fun getPageTitle(position: Int): CharSequence? =
-                    if (position == 0) "下载中" else "已完成"
+                override fun getPageTitle(position: Int): CharSequence = tabTitles[position]
 
 
             }
